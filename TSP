@@ -1,0 +1,62 @@
+class TSP: 
+    def __init__(self, n, seed = None):
+        self.n = n 
+        if seed is not None:
+            seed = np.random.seed(seed)
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        
+        self.x = x 
+        self.y = y 
+        self.route = np.random.permutation(n)
+        
+    def dist(self, city1, city2):
+        x = self.x 
+        y = self.y
+        x1, x2 = x[city1], x[city2]
+        y1, y2 = y[city1], y[city2]
+        return np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+    def propose_move(self):
+        n  = self.n 
+        route1 = self.route 
+        e1 = np.random.randint(n)
+        e2 = np.random.randint(n)
+        while True:
+            if e1>e2:
+                e1, e2 = e2, e1
+            if e1 != e2 and e1 + 1 !=  e2 and not (e1 == 0 and e2 == n-1):
+                break 
+        move = (e1 ,e2)
+        return move
+    
+    def accept_move(self,move):
+        e1 , e2 = move
+        new_route = self.route.copy()
+        new_route[e1 + 1: e2 + 1] =self.route[e2:e1:-1]
+        return new_route
+    
+    def plot(self):
+        x = self.x
+        y = self.y
+        route1 = self.route
+        xcomeback = [x[route1[-1]], x[route1[0]]]
+        ycomeback = [y[route1[-1]], y[route1[0]]]
+        plt.plot(x[route1], y[route1], "-", c = "orange")
+        plt.plot(xcomeback, ycomeback, "-", c = "orange")
+        plt.pause(0.00001)
+    def cost(self):
+        n = self.n
+        route1 = self.route
+        c = 0.0 
+        for i in range(n):
+            city1 = route1[i]
+            city2 = route1[(i+1)%n]
+            c += self.dist(city1, city2)
+        return c 
+    def compute_delta_cost(self):
+        croute1 = self.dist()
+        
+        route2 = self.propose_move()
+        croute2 = route2.dist()
+        return croute2 - croute1
