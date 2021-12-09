@@ -1,0 +1,47 @@
+class TSP_SC(TSP):
+    def propose_move(self):
+        n = self.n
+        e1 = np.random.randint(n)
+        e2 = np.random.randint(n)
+        while True:
+            if e1 > e2:
+                e1, e2 = e2, e1
+            if e1 != e2:
+                break
+        move = e1, e2 
+        return  move
+            
+    def accept_move(self,move):
+        e1 , e2 = move
+        route = self.route
+        new_route = route.copy()
+        new_route[e1], new_route[e2] = route[e2], route[e1]
+        return new_route
+        
+    def compute_delta_cost(self, move):
+        i , j = move
+        route = self.route
+        n = self.n
+        if j-i>1 and (i,j) != (0,n-1):
+            ip = route[(i-1) % n]
+            ic = route[i]
+            iN = route[(i + 1)& n]
+            
+            jp = route[(i-1)%n]
+            jc = route[j]
+            jN = route[(j + 1) % n]
+            
+            old_cost = self.dist(ip, ic) + self.dist(ic, iN) + self.dist(jc, jp) +self.dist(jc, jN)
+            new_cost = self.dist(ip, jc) + self.dist(jc, iN) + self.dist(jp, ic) + self.dist(jN, ic)
+            
+        else:
+            ip = route[(i-1)%n]
+            ic = route[i]
+            jc = route[j]
+            jN = route[(j + 1) % n]
+            
+            old_cost = self.dist(ip, ic) + self.dist(jc,jN)
+            new_cost = self.dist(ip, jc) + self.dist(ic, jN)
+        
+        delta_cost = new_cost - old_cost
+        return delta_cost
