@@ -32,6 +32,7 @@ class TSP:
     
     def accept_move(self,move):
         e1 , e2 = move
+        
         new_route = self.route.copy()
         new_route[e1 + 1: e2 + 1] =self.route[e2:e1:-1]
         return new_route
